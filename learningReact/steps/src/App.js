@@ -1,55 +1,71 @@
-import { useState } from "react";
-
-const activeStyle = {
-  backgroundColor: '#7950f2',
-  color: '#fff',
-  padding: '8px 13px',
-  borderRadius: '20px',
-  border: '0'
-};
-
-const normalStyle = {
-  backgroundColor: '#dcdcdc',
-  padding: '8px 13px',
-  borderRadius: '20px',
-  border: '0'
-};
-
-const messages = [
-  'Learn React  ⁕',
-  'Apply for Jobs  💼',
-  'Invest your new income 🤑'
-];
+import './style.css';
+import { useState } from 'react';
 
 export default function App() {
-  const [step, setStep] = useState(1);
-  const [isOpen, setIsOpen] =useState(true);
-  const handlePrevious = () => {
-    if ( step > 1) setStep(s => s - 1);
+  const [bill, setBill] = useState('');
+  const [tip, setTip] = useState(0);
+  const [friendTip, setFriendTip] = useState(0);
+  const handleBillChange = (e) => {
+    setBill(Number(e.target.value));
   }
+  const totalTip = bill * ((tip + friendTip) / 2 / 100) ;
 
-  const handleNext = () => {
-    if (step < 3) setStep(s => s + 1);
+  const handleReset = () => {
+    setBill('');
+    setTip(0);
+    setFriendTip(0);
   }
-
   return (
-    <div style={{position: 'relative', margin: '0 auto', padding: '60px', backgroundColor: '#fff', }}>
-      <button onClick={()=> setIsOpen(is => !is)} style={{backgroundColor: 'transparent', position: 'absolute', right: '10px', top: '10px', maxWidth: '400px', fontSize: '30px', cursor: 'pointer', margin: '0 auto', padding: '20px', border: '0'}}>&times;</button>
-      {isOpen && (<div style={{backgroundColor: '#f5f5f5', padding: '20px', margin: '20px'}}>
-      <div style={{display: 'flex', gap: '10px', justifyContent: 'space-around'}}>
-        <div style={step >= 1 ? activeStyle : normalStyle}>1</div>
-        <div style={step >= 2 ? activeStyle : normalStyle}>2</div>
-        <div style={step >= 3 ? activeStyle : normalStyle}>3</div>
-      </div>
-      <div style={{textAlign: 'center', marginTop: '40px'}}>
-        <p style={{fontWeight: 'bold'}}>Step {step}: {messages[step - 1]}</p>
-      </div>
-      <div style={{display: 'flex', justifyContent: 'space-around', marginTop: '40px'}}>
-        <button onClick={handlePrevious} style={{backgroundColor: '#7950f2', color: '#fff', padding: '8px 13px', borderRadius: '20px', border: '0' }}>Previous</button>
-        <button onClick={handleNext} style={{backgroundColor: '#7950f2', color: '#fff', padding: '8px 13px', borderRadius: '20px', border: '0' }}>Next</button>
-      </div>
-      </div>
-      )}
+    <>
+    <Bill bill={bill} onBillChange={handleBillChange} />
+    <Service bill={bill} tip={tip} onSelect={setTip} >
+      <p>How was the service?</p>
+    </Service>
+    <Service bill={bill} tip={friendTip} onSelect={setFriendTip} >
+      <p>How did your friend like the service?</p>
+    </Service>
+    <Output bill={bill}  totalTip={totalTip}/>
+    <Reset onReset={handleReset} />
+    </>
+  )
+}
+
+function Output({ bill, totalTip }) {
+const charge = bill + totalTip;
+  return (
+    <div className='output'>
+      {bill > 0 && <h3>Your pay is {charge} ({bill} + {totalTip})</h3>}
     </div>
   );
+}
+
+
+function Service({ children, tip, onSelect}) {
+  
+  return (
+    <div className='bill'>
+      {children}
+      <select className='input' value={tip} onChange={(e) => onSelect(Number(e.target.value))}>
+        <option value='0'>Dissatisfied (0%)</option>
+        <option value='5'>It was Ok (5%)</option>
+        <option value='10'>It was good (10%)</option>
+        <option value='20'>Absolutely amazing! (20%)</option>
+      </select>
+    </div>
+  )
+}
+
+function Bill({ bill, onBillChange }) {
+  return (
+    <div className='bill'>
+      <p>How much was the bill?</p>
+      <input className='input' value={bill} onChange={onBillChange} type="text" placeholder="Bill value"/>
+    </div>
+  )
+}
+
+function Reset({ children, onReset }) {
+  return (
+    <button style={{marginLeft: '20px', padding: '5px'}} onClick={onReset}>Reset</button>
+  )
 }

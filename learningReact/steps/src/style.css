@@ -1,0 +1,20 @@
+* {
+    font-family: sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.input {
+    border: 2px solid gray;
+    border-radius: 5px;
+}
+
+.bill {
+    display: flex;
+    margin: 10px 10px;
+}
+.output {
+    margin: 20px 1px;
+    padding: 10px;
+}
